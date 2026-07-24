@@ -1,6 +1,7 @@
 <?php
 
 // include ('conn.php');
+session_start();
 
 // Check if user is logged in and show toastr
 if (isset($_SESSION['login_success']) && $_SESSION['login_success'] == true) {
