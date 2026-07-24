@@ -1,6 +1,6 @@
 <?php
 
-include ('conn.php');
+// include ('conn.php');
 
 // Check if user is logged in and show toastr
 if (isset($_SESSION['login_success']) && $_SESSION['login_success'] == true) {
@@ -11,7 +11,7 @@ if (isset($_SESSION['login_success']) && $_SESSION['login_success'] == true) {
 }
 
 // Query to fetch announcements
-$result = $conn->query("SELECT a.id, u.name AS user, a.title, a.second_title, a.description, a.date_start, a.date_end, a.image FROM announcements a JOIN users u ON a.user_id = u.id ORDER BY a.updated_at DESC");
+$result = null;
 ?>
 <!doctype html>
 <html lang="en">
@@ -175,15 +175,11 @@ if (isset($_GET['status']) && $_GET['status'] == 'password_changed') {
         
       </style>
       <?php
-$result = $conn->query("SELECT a.id, u.name AS user, a.title, a.second_title, a.description, a.date_start, a.date_end, a.image 
-FROM announcements a 
-JOIN users u ON a.user_id = u.id 
-WHERE a.status = 'active' 
-ORDER BY a.updated_at DESC");
+$result = null;
 
 
 // Check if the query has returned any results
-if ($result->num_rows > 0) {
+if ($result && $result->num_rows > 0) {
 ?>
     <div class="blog-cards">
         <?php 
