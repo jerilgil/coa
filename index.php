@@ -1,18 +1,16 @@
 <?php
 
-// include ('conn.php');
 session_start();
 
-// Check if user is logged in and show toastr
-if (isset($_SESSION['login_success']) && $_SESSION['login_success'] == true) {
-    $showToastr = true;
-    unset($_SESSION['login_success']); // Remove the session variable after displaying toastr
-} else {
-    $showToastr = false;
+include('config.php');
+
+
+if (DB_ENABLED) {
+
+    include('conn.php');
+
 }
 
-// Query to fetch announcements
-$result = null;
 ?>
 <!doctype html>
 <html lang="en">
@@ -176,47 +174,90 @@ if (isset($_GET['status']) && $_GET['status'] == 'password_changed') {
         
       </style>
       <?php
+
 $result = null;
 
+if (DB_ENABLED) {
 
-// Check if the query has returned any results
-if ($result && $result->num_rows > 0) {
+$result = $conn->query("
+SELECT 
+a.id,
+u.name AS user,
+a.title,
+a.second_title,
+a.description,
+a.date_start,
+a.date_end,
+a.image
+
+FROM announcements a
+
+JOIN users u 
+ON a.user_id = u.id
+
+WHERE a.status='active'
+
+ORDER BY a.updated_at DESC
+
+");
+
+}
+
 ?>
     <div class="blog-cards">
-        <?php 
-        $index = 0; // Start with the first index
-        while ($row = $result->fetch_assoc()): 
-            // Add 'alt' class for alternating layout
-            $class = ($index % 2 == 0) ? 'alt' : ''; // Add 'alt' for even indexes
-            ?>
-            <div class="blog-card <?= $class ?>">
-                <div class="meta">
-                    <div class="photo" style="background-image: url(<?= htmlspecialchars($row['image']) ?>)"></div>
-                    <ul class="details">
-                        <li class="author text-white"><a href="#"><?= htmlspecialchars($row['user']) ?></a></li>
-                        <li class="date text-white">
-                            <?= htmlspecialchars($row['date_start']) ?> / <?= htmlspecialchars($row['date_end']) ?>
-                        </li>
-                    </ul>
-                </div>
-                <div class="description">
-                    <h1><?= htmlspecialchars($row['title']) ?></h1>
-                    <h2><?= htmlspecialchars($row['second_title']) ?></h2>
-                    <p><?= htmlspecialchars($row['description']) ?></p>
-                    <p class="read-more">
-                        <a href="#">Read More</a>
-                    </p>
-                </div>
-            </div>
-        <?php 
-            $index++; // Increment index for the next iteration
-        endwhile; ?>
-    </div>
-<?php
-} else {
-    echo "<p style='text-align:center'>No announcements found.</p>";
-}
+
+<?php 
+$index = 0;
+
+foreach ($result as $row):
+
+$class = ($index % 2 == 0) ? 'alt' : '';
+
 ?>
+
+<div class="blog-card <?= $class ?>">
+
+    <div class="meta">
+        <div class="photo" style="background-image: url(<?= htmlspecialchars($row['image']) ?>)"></div>
+
+        <ul class="details">
+            <li class="author text-white">
+                <a href="#">
+                    <?= htmlspecialchars($row['user']) ?>
+                </a>
+            </li>
+
+            <li class="date text-white">
+                <?= htmlspecialchars($row['date_start']) ?> /
+                <?= htmlspecialchars($row['date_end']) ?>
+            </li>
+        </ul>
+    </div>
+
+
+    <div class="description">
+
+        <h1><?= htmlspecialchars($row['title']) ?></h1>
+
+        <h2><?= htmlspecialchars($row['second_title']) ?></h2>
+
+        <p><?= htmlspecialchars($row['description']) ?></p>
+
+    </div>
+
+</div>
+
+
+<?php
+
+$index++;
+
+endforeach;
+
+?>
+
+</div>
+
 
 
 
