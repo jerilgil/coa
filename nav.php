@@ -1,8 +1,15 @@
-<?
+<?php
+
 session_start();
-$_SESSION['email'] = $user['email'];
-$_SESSION['name'] = $user['name'];
-// print_r($_SESSION);
+
+include('config.php');
+
+
+if (DB_ENABLED) {
+
+    include('conn.php');
+
+}
 ?>
 
 <nav class="navbar navbar-expand-lg">
